@@ -1,4 +1,4 @@
-#include "CTK_Tileset.h"
+#include "TileRenderer.h"
 
 #include "SDL2/SDL.h"
 #include <cstdio>
@@ -6,21 +6,21 @@
 const unsigned TILESET_WIDTH = 16;
 const unsigned TILESET_HEIGHT = 16;
 
-CTK_Tileset::CTK_Tileset(SDL_Renderer* renderer): tile_renderer(renderer)
+TileRenderer::TileRenderer(SDL_Renderer* renderer): tile_renderer(renderer)
 {
 }
-CTK_Tileset::CTK_Tileset(SDL_Renderer* renderer, const char* file_path): tile_renderer(renderer)
+TileRenderer::TileRenderer(SDL_Renderer* renderer, const char* file_path): tile_renderer(renderer)
 {
 	load_from_bmp( file_path );
 }
 
-CTK_Tileset::~CTK_Tileset()
+TileRenderer::~TileRenderer()
 {
 	tile_renderer = nullptr;
 	free();
 }
 
-bool CTK_Tileset::load_from_bmp(const char* file_path)
+bool TileRenderer::load_from_bmp(const char* file_path)
 {
 	free(); //Get rid of any already existing texture
 
@@ -75,7 +75,7 @@ bool CTK_Tileset::load_from_bmp(const char* file_path)
 	return texture != NULL;
 }
 
-void CTK_Tileset::render(int x, int y, char clip)
+void TileRenderer::render(int x, int y, char clip)
 {
 	SDL_Rect render_clip = { 0, 0, width, height };
 	//if not rendering the entire image
@@ -86,7 +86,7 @@ void CTK_Tileset::render(int x, int y, char clip)
 	SDL_RenderCopy( tile_renderer, texture, &render_clip, &render_rect);
 }
 
-void CTK_Tileset::free()
+void TileRenderer::free()
 {
 	//Free existing texture if it exists
 	if( texture != NULL )

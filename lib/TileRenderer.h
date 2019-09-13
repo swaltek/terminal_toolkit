@@ -1,14 +1,14 @@
-#ifndef H_CTK_TILESET
-#define H_CTK_TILESET
+#ifndef H_CTK_TILE_RENDERER
+#define H_CTK_TILE_RENDERER
 #include "SDL2/SDL.h"
 
 //Wrapper class for rendering tileset
-class CTK_Tileset
+class TileRenderer
 {
 	public:
-		CTK_Tileset(SDL_Renderer*);
-		CTK_Tileset(SDL_Renderer*, const char*);
-		~CTK_Tileset();
+		TileRenderer(SDL_Renderer*);
+		TileRenderer(SDL_Renderer*, const char*);
+		~TileRenderer();
 
 		bool load_from_bmp(const char*);
 

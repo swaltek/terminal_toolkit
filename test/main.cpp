@@ -1,4 +1,4 @@
-#include "../lib/CTK_Tileset.h"
+#include "../lib/TileRenderer.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>
@@ -60,7 +60,7 @@ int main()
 	bool quit{ false };
 
 	//init code
-	CTK_Tileset tile( renderer , "data/art/curses_640x300.bmp");
+	TileRenderer tile( renderer , "data/art/curses_640x300.bmp");
 
 	while( quit != true )
 	{
