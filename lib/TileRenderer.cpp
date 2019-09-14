@@ -8,15 +8,15 @@ const unsigned TILESET_HEIGHT = 16;
 
 TileRenderer::~TileRenderer()
 {
-	tile_renderer = nullptr;
+	renderer_ = nullptr;
 	free();
 }
 
 bool TileRenderer::load_from_bmp(const char* file_path)
 {
-	free(); //Get rid of any already existing texture
+	free(); //Get rid of any already existing texture_
 
-	SDL_Texture* new_texture { NULL }; //Final new texture
+	SDL_Texture* new_texture_ { NULL }; //Final new texture_
 	SDL_Surface* loaded_surface = SDL_LoadBMP( file_path );//Load image from path
 
 	if(loaded_surface == NULL )
@@ -35,26 +35,26 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 			printf( "Error color keying! SDL Error %s\n", SDL_GetError() );
 		}
 
-		new_texture = SDL_CreateTextureFromSurface( tile_renderer, loaded_surface );
-		if( new_texture == NULL )
+		new_texture_ = SDL_CreateTextureFromSurface( renderer_, loaded_surface );
+		if( new_texture_ == NULL )
 		{
-			printf( "Unable to create texture from %s! SDL Error: %s\n", file_path, SDL_GetError() );
+			printf( "Unable to create texture_ from %s! SDL Error: %s\n", file_path, SDL_GetError() );
 		}
 		else
 		{
-			width = loaded_surface->w;
-			height = loaded_surface->h;
-			tile_width = width / TILESET_WIDTH;
-			tile_height = height / TILESET_HEIGHT;
+			width_ = loaded_surface->w;
+			height_ = loaded_surface->h;
+			tile_width_ = width / TILESET_WIDTH;
+			tile_height_ = height_ / TILESET_HEIGHT;
 
-			tile_clips_size = TILESET_WIDTH * TILESET_HEIGHT;
-			tile_clips = new SDL_Rect[ tile_clips_size ];
-			for(unsigned i{ 0 }; i < tile_clips_size ; ++i )
+			tiles_size_ = TILESET_WIDTH * TILESET_HEIGHT;
+			tiles_ = new SDL_Rect[ tiles_size_ ];
+			for(unsigned i{ 0 }; i < tiles_size_ ; ++i )
 			{
-				tile_clips[i].x = (i % TILESET_WIDTH) * tile_width;
-				tile_clips[i].y = (i / TILESET_WIDTH) * tile_height;
-				tile_clips[i].w = tile_width;
-				tile_clips[i].h = tile_height;
+				tiles_[i].x = (i % TILESET_WIDTH) * tile_width_;
+				tiles_[i].y = (i / TILESET_WIDTH) * tile_height_;
+				tiles_[i].w = tile_width_;
+				tiles_[i].h = tile_height_;
 			}
 		}
 
@@ -63,37 +63,37 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 	}
 
 	//return success
-	texture = new_texture;
-	return texture != NULL;
+	texture_ = new_texture_;
+	return texture_ != NULL;
 }
 
 void TileRenderer::render(int x, int y, char clip) const
 {
-	SDL_Rect render_clip = { 0, 0, width, height };
+	SDL_Rect render_clip = { 0, 0, width_, height_ };
 
 	//if not rendering the entire image
-	if( clip != '\0' ) render_clip = tile_clips[clip];
+	if( clip != '\0' ) render_clip = tiles_[clip];
 
 	SDL_Rect render_rect = { x, y, render_clip.w, render_clip.h };
 
-	SDL_RenderCopy( tile_renderer, texture, &render_clip, &render_rect);
+	SDL_RenderCopy( renderer_, texture_, &render_clip, &render_rect);
 }
 
 void TileRenderer::free()
 {
-	//Free existing texture if it exists
-	if( texture != NULL )
+	//Free existing texture_ if it exists
+	if( texture_ != NULL )
 	{
-		SDL_DestroyTexture( texture );
-		texture = NULL;
+		SDL_DestroyTexture( texture_ );
+		texture_ = NULL;
 
-		delete[] tile_clips;
-		tile_clips = nullptr;
-		tile_clips_size = 0;
+		delete[] tiles_;
+		tiles_ = nullptr;
+		tiles_size_ = 0;
 
-		width = 0;
-		height = 0;
-		tile_width = 0;
-		tile_height = 0;
+		width_ = 0;
+		height_ = 0;
+		tile_width_ = 0;
+		tile_height_ = 0;
 	}
 }
