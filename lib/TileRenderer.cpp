@@ -6,14 +6,6 @@
 const unsigned TILESET_WIDTH = 16;
 const unsigned TILESET_HEIGHT = 16;
 
-TileRenderer::TileRenderer(SDL_Renderer* renderer): tile_renderer(renderer)
-{
-}
-TileRenderer::TileRenderer(SDL_Renderer* renderer, const char* file_path): tile_renderer(renderer)
-{
-	load_from_bmp( file_path );
-}
-
 TileRenderer::~TileRenderer()
 {
 	tile_renderer = nullptr;
@@ -75,13 +67,14 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 	return texture != NULL;
 }
 
-void TileRenderer::render(int x, int y, char clip)
+void TileRenderer::render(int x, int y, char clip) const
 {
 	SDL_Rect render_clip = { 0, 0, width, height };
-	//if not rendering the entire image
-	if( clip != '\n' ) render_clip = tile_clips[clip];
 
-	SDL_Rect render_rect = { x * tile_width , y * tile_height, render_clip.w, render_clip.h };
+	//if not rendering the entire image
+	if( clip != '\0' ) render_clip = tile_clips[clip];
+
+	SDL_Rect render_rect = { x, y, render_clip.w, render_clip.h };
 
 	SDL_RenderCopy( tile_renderer, texture, &render_clip, &render_rect);
 }
