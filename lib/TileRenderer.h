@@ -11,9 +11,14 @@ class TileRenderer
 
 		bool load_from_bmp(const char*);
 
-		void render(int, int, char = '\0') const;
-
 		void free();
+
+		void render(int, int, char = '\n') const;
+
+		void set_color(float, float, float);
+
+		int tile_height() const;
+		int tile_width() const;
 	private:
 		SDL_Renderer* renderer_ { nullptr };
 		SDL_Texture* texture_ { nullptr };

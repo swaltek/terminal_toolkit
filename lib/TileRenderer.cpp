@@ -44,7 +44,7 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 		{
 			width_ = loaded_surface->w;
 			height_ = loaded_surface->h;
-			tile_width_ = width / TILESET_WIDTH;
+			tile_width_ = width_ / TILESET_WIDTH;
 			tile_height_ = height_ / TILESET_HEIGHT;
 
 			tiles_size_ = TILESET_WIDTH * TILESET_HEIGHT;
@@ -72,7 +72,7 @@ void TileRenderer::render(int x, int y, char clip) const
 	SDL_Rect render_clip = { 0, 0, width_, height_ };
 
 	//if not rendering the entire image
-	if( clip != '\0' ) render_clip = tiles_[clip];
+	if( clip != '\n' ) render_clip = tiles_[clip];
 
 	SDL_Rect render_rect = { x, y, render_clip.w, render_clip.h };
 
@@ -96,4 +96,19 @@ void TileRenderer::free()
 		tile_width_ = 0;
 		tile_height_ = 0;
 	}
+}
+
+void TileRenderer::set_color(float r, float g, float b)
+{
+	SDL_SetTextureColorMod(texture_, r, g, b);
+}
+
+int TileRenderer::tile_width() const
+{
+	return tile_width_;
+}
+
+int TileRenderer::tile_height() const
+{
+	return tile_height_;
 }

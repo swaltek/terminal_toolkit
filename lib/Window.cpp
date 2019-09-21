@@ -1,4 +1,6 @@
 #include "Window.h"
+
+#include "Console.h"
 #include "TileRenderer.h"
 
 #include <SDL2/SDL.h>
@@ -41,6 +43,8 @@ void Window::close()
 
 void Window::run()
 {
+
+	Console console{ 10, 10 };
 	bool quit{ false };
 	while( quit != true )
 	{
@@ -60,6 +64,11 @@ void Window::run()
 		}
 
 		// UPDATE
+		console.set_char(2, 2, 3);
+		console.set_color(2, 2, 0xff, 0x00, 0xff);
+		console.set_back_color(2, 2, 0xff, 0xff, 0xff);
+		console.print(0, 0, "Hello, World!");
+		console.print(5, 9, "Hello, World!");
 
 		// RENDER
 		//clear screen
@@ -67,9 +76,29 @@ void Window::run()
 		SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xff );
 		SDL_RenderClear( renderer_ );
 
-		//render
-		tile_renderer_->render(0, 0);
-		tile_renderer_->render(width_/2, height_/2, 1);
+		//render console
+		for(unsigned i{ 0 }; i < console.width_ * console.height_; ++i)
+		{
+			int cell_x = i % console.height_;
+			int cell_y = i / console.width_;
+			SDL_Rect cell_rect
+				{
+					cell_x * tile_renderer_->tile_width(),
+					cell_y * tile_renderer_->tile_height(),
+					tile_renderer_->tile_width(),
+					tile_renderer_->tile_height()
+				};
+			const ConsoleCell& cell = console.cells_[i];
+			//render background
+			SDL_SetRenderDrawColor(renderer_, cell.back_r, cell.back_g, cell.back_b, 0xff);
+			SDL_RenderFillRect(renderer_, &cell_rect);
+			//render symbol
+			tile_renderer_->set_color(cell.r, cell.g, cell.b);
+			tile_renderer_->render(
+					cell_rect.x,
+					cell_rect.y,
+					cell.c);
+		}
 
 		//update
 		SDL_RenderPresent( renderer_ );
