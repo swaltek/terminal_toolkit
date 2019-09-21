@@ -2,8 +2,10 @@
 
 #include "Console.h"
 #include "TileRenderer.h"
+#include "Timer.h"
 
 #include <SDL2/SDL.h>
+#include <cstdint>
 #include <cstdio>
 
 Window::Window(unsigned width, unsigned height,const char* tileset_path)
@@ -43,11 +45,21 @@ void Window::close()
 
 void Window::run()
 {
+	//INIT
+	//timestep
+	Timer fps_timer{};
+	Timer cap_timer{};
+	float avg_fps{};
+	float frame_cap{ 55 };
+	unsigned counted_frames{ 0 };
+	fps_timer.start();
 
 	Console console{ 10, 10 };
 	bool quit{ false };
 	while( quit != true )
 	{
+		cap_timer.start();
+
 		// HANDLE INPUT
 		SDL_Event e;
 		while( SDL_PollEvent( &e ) != 0 )
@@ -64,6 +76,12 @@ void Window::run()
 		}
 
 		// UPDATE
+		//timestep
+		avg_fps  = counted_frames / ( fps_timer.get_ticks() / 1000.0f);
+		if(avg_fps > 2000000 ) avg_fps = 0;
+		printf("avg_fps %f\n", avg_fps);
+
+		//test code
 		console.set_char(2, 2, 3);
 		console.set_color(2, 2, 0xff, 0x00, 0xff);
 		console.set_back_color(2, 2, 0xff, 0xff, 0xff);
@@ -72,7 +90,6 @@ void Window::run()
 
 		// RENDER
 		//clear screen
-		//background color will be black
 		SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xff );
 		SDL_RenderClear( renderer_ );
 
@@ -102,7 +119,14 @@ void Window::run()
 
 		//update
 		SDL_RenderPresent( renderer_ );
+		++counted_frames;
 
+		//if frame finishes faster then allowed by frame_cap
+		uint32_t frame_ticks = cap_timer.get_ticks();
+		if( frame_ticks < (1000.0f / frame_cap) )
+		{
+			SDL_Delay( (1000.0f / frame_cap) - frame_ticks );
+		}
 	}
 }
 
