@@ -10,6 +10,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(main_test
 	lib/Console.cpp
+	lib/RootConsole.cpp
 	lib/TileRenderer.cpp
 	lib/Window.cpp
 	test/main.cpp)

@@ -12,6 +12,14 @@ Console::~Console()
 	delete[] cells_;
 }
 
+void Console::clear()
+{
+	for(int i{ 0 }; i < cell_count(); ++i)
+	{
+		cells_[i] = {};
+	}
+}
+
 void Console::set_char(unsigned x, unsigned y, char c)
 {
 	cells_[(y * width_) + x].c = c;

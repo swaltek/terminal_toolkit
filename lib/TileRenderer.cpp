@@ -67,7 +67,7 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 	return texture_ != NULL;
 }
 
-void TileRenderer::render(int x, int y, char clip) const
+void TileRenderer::render(int x, int y, char clip)
 {
 	SDL_Rect render_clip = { 0, 0, width_, height_ };
 

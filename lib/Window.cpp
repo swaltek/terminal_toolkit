@@ -1,6 +1,6 @@
 #include "Window.h"
 
-#include "Console.h"
+#include "RootConsole.h"
 #include "TileRenderer.h"
 
 #include <SDL2/SDL.h>
@@ -12,36 +12,33 @@
 Window::Window(unsigned width, unsigned height,const char* tileset_path)
 	: width_(width), height_(height)
 {
-	if(init_sdl() != true)//init was unsuccsesfull
+	if(SDL_WasInit(SDL_INIT_VIDEO) != true)
 	{
-		printf("Failure to init window!");
-		good_ = false;
+		printf("SDL has not been init yet... Trying to init SDL!\n");
+		good_ = init_sdl();
+		printf( "Init of SDL was %s!\n", good_ ? "Successful" : "Failed" );
 	}
-	else
+	if(good_)
 	{
-		tile_renderer_ = new TileRenderer( renderer_ );
-		if( tile_renderer_->load_from_bmp(tileset_path) != true ) good_ = false;
+		if( create() == false )
+		{
+			good_ = false;
+		}
+		else
+		{
+			root_console_ = new RootConsole(10, 10, renderer_, tileset_path);
+			if( root_console_->good() != true )
+			{
+				good_ = false;
+				printf("Failed to create root console!\n");
+			}
+		}
 	}
 }
 
 Window::~Window()
 {
 	close();
-}
-
-void Window::close()
-{
-	SDL_DestroyWindow( window_ );
-	SDL_DestroyRenderer( renderer_ );
-	window_ = nullptr;
-	renderer_ = nullptr;
-
-	delete tile_renderer_;
-	tile_renderer_ = nullptr;
-
-	SDL_Quit();
-
-	good_ = false;
 }
 
 void Window::run()
@@ -53,8 +50,6 @@ void Window::run()
 	float fps{ 0 };
 	uint64_t start_counter;
 	uint64_t end_counter;
-
-	Console console{ 10, 10 };
 
 	bool quit{ false };
 	while( quit != true )
@@ -80,12 +75,12 @@ void Window::run()
 		//fps counter
 		std::string fps_string = std::to_string(fps);
 		fps_string = fps_string.substr(0, fps_string.find('.') + 2);
-		console.print(0, 0, fps_string);
+		root_console_->print(0, 0, fps_string);
 
 		//test code
-		console.set_char(2, 2, 3);
-		console.set_color(2, 2, 0xff, 0x00, 0xff);
-		console.set_back_color(2, 2, 0xff, 0xff, 0xff);
+		root_console_->set_char(2, 2, 3);
+		root_console_->set_color(2, 2, 0xff, 0x00, 0xff);
+		root_console_->set_back_color(2, 2, 0xff, 0xff, 0xff);
 
 		// RENDER
 		//clear screen
@@ -93,28 +88,8 @@ void Window::run()
 		SDL_RenderClear( renderer_ );
 
 		//render console
-		for(unsigned i{ 0 }; i < console.width_ * console.height_; ++i)
-		{
-			int cell_x = i % console.height_;
-			int cell_y = i / console.width_;
-			SDL_Rect cell_rect
-				{
-					cell_x * tile_renderer_->tile_width(),
-					cell_y * tile_renderer_->tile_height(),
-					tile_renderer_->tile_width(),
-					tile_renderer_->tile_height()
-				};
-			const ConsoleCell& cell = console.cells_[i];
-			//render background
-			SDL_SetRenderDrawColor(renderer_, cell.back_r, cell.back_g, cell.back_b, 0xff);
-			SDL_RenderFillRect(renderer_, &cell_rect);
-			//render symbol
-			tile_renderer_->set_color(cell.r, cell.g, cell.b);
-			tile_renderer_->render(
-					cell_rect.x,
-					cell_rect.y,
-					cell.c);
-		}
+		root_console_->render();
+		root_console_->clear();
 
 		//update
 		SDL_RenderPresent( renderer_ );
@@ -148,30 +123,48 @@ void Window::run()
 	}
 }
 
-bool Window::init_sdl()
+void Window::close()
 {
-	if( SDL_Init(SDL_INIT_VIDEO) != 0 )
+	SDL_DestroyWindow( window_ );
+	SDL_DestroyRenderer( renderer_ );
+	window_ = nullptr;
+	renderer_ = nullptr;
+
+	delete root_console_;
+	root_console_ = nullptr;
+
+	SDL_Quit();
+
+	good_ = false;
+}
+
+bool Window::create()
+{
+	window_ = SDL_CreateWindow( "RL",
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+			width_, height_, SDL_WINDOW_SHOWN );
+	if( window_ == nullptr )
 	{
-		printf( "Failure to init SDL! SDL Error: %s\n", SDL_GetError() );
+		printf( "Failure to create window! SDL Error: %s\n", SDL_GetError() );
 	}
 	else
 	{
-		window_ = SDL_CreateWindow( "RL",
-				SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-				width_, height_, SDL_WINDOW_SHOWN );
-		if( window_ == nullptr )
+		renderer_ = SDL_CreateRenderer( window_, -1, SDL_RENDERER_ACCELERATED );
+		if( renderer_ == nullptr )
 		{
-			printf( "Failure to create window! SDL Error: %s\n", SDL_GetError() );
-		}
-		else
-		{
-			renderer_ = SDL_CreateRenderer( window_, -1, SDL_RENDERER_ACCELERATED );
-			if( renderer_ == nullptr )
-			{
-				printf( "Failure to create renderer! SDL Error: %s\n", SDL_GetError() );
-			}
+			printf( "Failure to create renderer! SDL Error: %s\n", SDL_GetError() );
 		}
 	}
 
 	return renderer_ != nullptr;
+}
+
+bool init_sdl()
+{
+	if( SDL_Init(SDL_INIT_VIDEO) != 0 )
+	{
+		printf( "Failure to init SDL! SDL Error: %s\n", SDL_GetError() );
+		return false;
+	}
+	return true;
 }

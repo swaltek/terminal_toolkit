@@ -13,7 +13,7 @@ class TileRenderer
 
 		void free();
 
-		void render(int, int, char = '\n') const;
+		void render(int, int, char = '\n');
 
 		void set_color(float, float, float);
 
