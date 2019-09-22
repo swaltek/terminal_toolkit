@@ -23,6 +23,5 @@ private:
 	unsigned width_, height_;
 protected:
 	ConsoleCell* cells_;
-
 };
 #endif
