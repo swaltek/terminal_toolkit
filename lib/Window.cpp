@@ -2,11 +2,12 @@
 
 #include "Console.h"
 #include "TileRenderer.h"
-#include "Timer.h"
 
 #include <SDL2/SDL.h>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <string>
 
 Window::Window(unsigned width, unsigned height,const char* tileset_path)
 	: width_(width), height_(height)
@@ -47,18 +48,18 @@ void Window::run()
 {
 	//INIT
 	//timestep
-	Timer fps_timer{};
-	Timer cap_timer{};
-	float avg_fps{};
-	float frame_cap{ 55 };
-	unsigned counted_frames{ 0 };
-	fps_timer.start();
+	float frame_cap{ 60 };
+	float ms_per_frame{ 1000.0f / frame_cap };
+	float fps{ 0 };
+	uint64_t start_counter;
+	uint64_t end_counter;
 
 	Console console{ 10, 10 };
+
 	bool quit{ false };
 	while( quit != true )
 	{
-		cap_timer.start();
+		start_counter = SDL_GetPerformanceCounter();
 
 		// HANDLE INPUT
 		SDL_Event e;
@@ -76,17 +77,15 @@ void Window::run()
 		}
 
 		// UPDATE
-		//timestep
-		avg_fps  = counted_frames / ( fps_timer.get_ticks() / 1000.0f);
-		if(avg_fps > 2000000 ) avg_fps = 0;
-		printf("avg_fps %f\n", avg_fps);
+		//fps counter
+		std::string fps_string = std::to_string(fps);
+		fps_string = fps_string.substr(0, fps_string.find('.') + 2);
+		console.print(0, 0, fps_string);
 
 		//test code
 		console.set_char(2, 2, 3);
 		console.set_color(2, 2, 0xff, 0x00, 0xff);
 		console.set_back_color(2, 2, 0xff, 0xff, 0xff);
-		console.print(0, 0, "Hello, World!");
-		console.print(5, 9, "Hello, World!");
 
 		// RENDER
 		//clear screen
@@ -119,14 +118,33 @@ void Window::run()
 
 		//update
 		SDL_RenderPresent( renderer_ );
-		++counted_frames;
 
-		//if frame finishes faster then allowed by frame_cap
-		uint32_t frame_ticks = cap_timer.get_ticks();
-		if( frame_ticks < (1000.0f / frame_cap) )
+		//UPDATE TIMESTEP AND FPS
+		end_counter = SDL_GetPerformanceCounter();
+		//mulitplying by 1000.0f to convert to ms
+		float elapsed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
+		if( elapsed_ms < ms_per_frame )
 		{
-			SDL_Delay( (1000.0f / frame_cap) - frame_ticks );
+			float ms_left = ms_per_frame - elapsed_ms;
+			SDL_Delay( floor(ms_left) );
+
+			//loop for the amount of time that could not be delayed with SDL_Delay
+			float missed_ms = ms_left - floor(ms_left);
+			start_counter = SDL_GetPerformanceCounter();
+			float delayed_ms { 0 };
+			while(delayed_ms < missed_ms)
+			{
+				end_counter = SDL_GetPerformanceCounter();
+				delayed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
+			}
+			//adding time delayed to elapsed time of frame for fps calculation
+			elapsed_ms += floor(ms_left) + delayed_ms;
+			/*floor(ms_left) is time delayed using SDL_Delay
+			this has a chance to be inaccurate if SDL_Delay 
+			delays more then floor(ms_left) due to OS sceduling*/
 		}
+		//dividing by 1000.0f to convert to seconds
+		fps = 1.0f / (elapsed_ms / 1000.0f);
 	}
 }
 

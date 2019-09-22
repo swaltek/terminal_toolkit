@@ -2,6 +2,7 @@
 #define _H_CTK_CONSOLE
 #include "ConsoleCell.h"
 #include "Window.h"
+#include <string>
 
 class Console
 {
@@ -15,6 +16,7 @@ public:
 	void set_back_color(unsigned, unsigned, float, float, float);
 	void set_color(unsigned, unsigned, float, float, float);
 	void print(unsigned, unsigned,const char*);
+	void print(unsigned, unsigned,const std::string&);
 
 	unsigned width() const { return width_; }
 	unsigned height() const { return height_; }

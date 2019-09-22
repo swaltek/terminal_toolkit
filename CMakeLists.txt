@@ -11,7 +11,6 @@ include_directories(${SDL2_INCLUDE_DIRS})
 add_executable(main_test
 	lib/Console.cpp
 	lib/TileRenderer.cpp
-	lib/Timer.cpp
 	lib/Window.cpp
 	test/main.cpp)
 target_link_libraries(main_test ${SDL2_LIBRARIES})

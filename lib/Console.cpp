@@ -1,5 +1,6 @@
 #include "Console.h"
 #include "ConsoleCell.h"
+#include <string>
 
 Console::Console(unsigned width, unsigned height):  width_(width), height_(height)
 {
@@ -36,5 +37,14 @@ void Console::print(unsigned x, unsigned y,const char* c)
 	while( *c != '\0' && i < (width_ * height_))
 	{
 		cells_[i++].c = *c++;
+	}
+}
+
+void Console::print(unsigned x, unsigned y,const std::string& str)
+{
+	int i = (y * width_) + x;
+	for(size_t str_i = 0; str_i < str.length(); ++str_i)
+	{
+		cells_[i++].c = str.at(str_i);
 	}
 }
