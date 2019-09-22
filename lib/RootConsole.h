@@ -13,7 +13,6 @@ class RootConsole : public Console
 		void render();
 		bool good() const { return good_; }
 	private:
-		SDL_Renderer* renderer_{ nullptr };
 		TileRenderer tile_renderer_;
 		bool good_ { true };
 };

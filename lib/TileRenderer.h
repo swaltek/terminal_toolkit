@@ -1,6 +1,7 @@
 #ifndef H_CTK_TILE_RENDERER
 #define H_CTK_TILE_RENDERER
-#include "SDL2/SDL.h"
+#include <SDL2/SDL.h>
+#include "ConsoleCell.h"
 
 //Wrapper class for rendering tileset
 class TileRenderer
@@ -13,18 +14,16 @@ class TileRenderer
 
 		void free();
 
-		void render(int, int, char = '\n');
+		SDL_Rect get_tile(const char) const;
+		void render(const SDL_Rect&,const ConsoleCell&);
 
-		void set_color(float, float, float);
-
-		int tile_height() const;
-		int tile_width() const;
+		int tile_width() const { return tile_width_; }
+		int tile_height() const { return tile_height_; }
 	private:
+		int tiles_in_row() const { return width_ / tile_width_; }
+
 		SDL_Renderer* renderer_ { nullptr };
 		SDL_Texture* texture_ { nullptr };
-
-		SDL_Rect* tiles_ { nullptr };
-		unsigned tiles_size_ { 0 };
 
 		int width_ { 0 }; //of texture
 		int height_ { 0 }; //of texture
