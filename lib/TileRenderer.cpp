@@ -16,6 +16,7 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 {
 	free(); //Get rid of any already existing texture
 
+	printf("Loading %s to TileRenderer\n", file_path);
 	SDL_Texture* new_texture_ { NULL }; //Final  texture
 	SDL_Surface* loaded_surface = SDL_LoadBMP( file_path );
 
@@ -49,8 +50,9 @@ bool TileRenderer::load_from_bmp(const char* file_path)
 	
 
 	//return success
-	texture_ = new_texture_;
-	return texture_ != NULL;
+	texture_ = new_texture_ ;
+	printf("Load %s!\n", texture_ != nullptr ? "successful" : "failed" );
+	return texture_ != nullptr;
 }
 
 SDL_Rect TileRenderer::get_tile(const char c) const
@@ -75,10 +77,10 @@ void TileRenderer::render(const SDL_Rect& rect, const ConsoleCell& cell)
 void TileRenderer::free()
 {
 	//Free existing texture_ if it exists
-	if( texture_ != NULL )
+	if( texture_ != nullptr )
 	{
 		SDL_DestroyTexture( texture_ );
-		texture_ = NULL;
+		texture_ = nullptr;
 
 		width_ = 0;
 		height_ = 0;

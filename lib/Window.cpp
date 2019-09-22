@@ -18,20 +18,18 @@ Window::Window(unsigned width, unsigned height,const char* tileset_path)
 		good_ = init_sdl();
 		printf( "Init of SDL was %s!\n", good_ ? "Successful" : "Failed" );
 	}
+
 	if(good_)
 	{
-		if( create() == false )
+		good_ = create();
+		if(good_)
 		{
-			good_ = false;
-		}
-		else
-		{
-			root_console_ = new RootConsole(10, 10, renderer_, tileset_path);
-			if( root_console_->good() != true )
-			{
-				good_ = false;
-				printf("Failed to create root console!\n");
-			}
+			TileRenderer* t_renderer = new TileRenderer( renderer_ );
+			good_ = t_renderer->load_from_bmp(tileset_path);
+
+			root_console_ = new RootConsole(10, 10, t_renderer);
+
+			if( !good_ ) printf("Failed to create root console!\n");
 		}
 	}
 }

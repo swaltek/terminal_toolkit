@@ -7,13 +7,12 @@
 class RootConsole : public Console
 {
 	public:
-		RootConsole(unsigned, unsigned, SDL_Renderer*, const char*);
-		virtual ~RootConsole() = default;
+		RootConsole(unsigned height, unsigned width,TileRenderer* t_renderer):
+			Console(height ,width), tile_renderer_(t_renderer) {}
+		virtual ~RootConsole() override;
 
 		void render();
-		bool good() const { return good_; }
 	private:
-		TileRenderer tile_renderer_;
-		bool good_ { true };
+		TileRenderer* tile_renderer_;
 };
 #endif

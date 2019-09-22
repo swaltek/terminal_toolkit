@@ -2,6 +2,8 @@
 #define H_CTK_TILE_RENDERER
 #include <SDL2/SDL.h>
 #include "ConsoleCell.h"
+#include "SdlDeleter.h"
+#include <memory>
 
 //Wrapper class for rendering tileset
 class TileRenderer
