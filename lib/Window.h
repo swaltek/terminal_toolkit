@@ -1,5 +1,5 @@
-#ifndef _HPP_TTK_WINDOW
-#define _HPP_TTK_WINDOW
+#ifndef _H_TTK_WINDOW
+#define _H_TTK_WINDOW
 #include "RootConsole.h"
 
 #include <SDL2/SDL.h>
@@ -31,4 +31,4 @@ namespace TTK
 			bool good_ { true };
 	};
 }
-#endif //_HPP_TTK_WINDOW
+#endif //_H_TTK_WINDOW

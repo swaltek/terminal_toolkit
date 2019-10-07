@@ -1,5 +1,5 @@
-#ifndef _HPP_CTK_ROOT_CONSOLE
-#define _HPP_CTK_ROOT_CONSOLE
+#ifndef _H_CTK_ROOT_CONSOLE
+#define _H_CTK_ROOT_CONSOLE
 #include <SDL2/SDL.h>
 #include "Console.h"
 #include "TileRenderer.h"
@@ -18,4 +18,4 @@ namespace TTK
 			TileRenderer* tile_renderer_;
 	};
 }
-#endif //_HPP_CTK_ROOT_CONSOLE
+#endif //_H_CTK_ROOT_CONSOLE

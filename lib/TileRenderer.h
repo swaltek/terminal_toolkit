@@ -1,5 +1,5 @@
-#ifndef _HPP_TTK_TILE_RENDERER
-#define _HPP_TTK_TILE_RENDERER
+#ifndef _H_TTK_TILE_RENDERER
+#define _H_TTK_TILE_RENDERER
 #include <SDL2/SDL.h>
 
 #include "ConsoleCell.h"
@@ -35,4 +35,4 @@ namespace TTK
 			int tile_height_ { 0 }; //individual tile
 	};
 }
-#endif //_HPP_TTK_TILE_RENDERER
+#endif //_H_TTK_TILE_RENDERER

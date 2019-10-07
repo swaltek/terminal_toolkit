@@ -1,5 +1,5 @@
-#ifndef _HPP_TTK_CONSOLE
-#define _HPP_TTK_CONSOLE
+#ifndef _H_TTK_CONSOLE
+#define _H_TTK_CONSOLE
 #include "ConsoleCell.h"
 #include <string>
 
@@ -27,4 +27,4 @@ namespace TTK
 		ConsoleCell* cells_;
 	};
 }
-#endif //_HPP_TTK_CONSOLE
+#endif //_H_TTK_CONSOLE

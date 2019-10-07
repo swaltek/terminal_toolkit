@@ -1,5 +1,5 @@
-#ifndef _HPP_TTK_CONSOLE_CELL
-#define _HPP_TTK_CONSOLE_CELL
+#ifndef _H_TTK_CONSOLE_CELL
+#define _H_TTK_CONSOLE_CELL
 namespace TTK
 {
 	struct ConsoleCell
@@ -13,4 +13,4 @@ namespace TTK
 		float back_b { 0x00 };
 	};
 }
-#endif //_HPP_TTK_CONSOLE_CELL
+#endif //_H_TTK_CONSOLE_CELL
