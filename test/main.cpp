@@ -1,4 +1,5 @@
-#include "../lib/Window.h"
+#include "../lib/Window.hpp"
+using namespace TTK;
 
 int main()
 {
