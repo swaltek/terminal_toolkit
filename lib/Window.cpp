@@ -1,7 +1,7 @@
-#include "Window.hpp"
+#include "Window.h"
 
-#include "RootConsole.hpp"
-#include "TileRenderer.hpp"
+#include "RootConsole.h"
+#include "TileRenderer.h"
 
 #include <SDL2/SDL.h>
 #include <cmath>

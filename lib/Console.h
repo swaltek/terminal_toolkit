@@ -1,6 +1,6 @@
 #ifndef _HPP_TTK_CONSOLE
 #define _HPP_TTK_CONSOLE
-#include "ConsoleCell.hpp"
+#include "ConsoleCell.h"
 #include <string>
 
 namespace TTK

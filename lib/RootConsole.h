@@ -1,8 +1,8 @@
 #ifndef _HPP_CTK_ROOT_CONSOLE
 #define _HPP_CTK_ROOT_CONSOLE
 #include <SDL2/SDL.h>
-#include "Console.hpp"
-#include "TileRenderer.hpp"
+#include "Console.h"
+#include "TileRenderer.h"
 
 namespace TTK
 {

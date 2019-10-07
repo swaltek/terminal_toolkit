@@ -1,6 +1,6 @@
 #ifndef _HPP_TTK_WINDOW
 #define _HPP_TTK_WINDOW
-#include "RootConsole.hpp"
+#include "RootConsole.h"
 
 #include <SDL2/SDL.h>
 

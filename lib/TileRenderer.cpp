@@ -1,4 +1,4 @@
-#include "TileRenderer.hpp"
+#include "TileRenderer.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>

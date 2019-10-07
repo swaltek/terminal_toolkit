@@ -2,7 +2,7 @@
 #define _HPP_TTK_TILE_RENDERER
 #include <SDL2/SDL.h>
 
-#include "ConsoleCell.hpp"
+#include "ConsoleCell.h"
 #include <memory>
 
 namespace TTK

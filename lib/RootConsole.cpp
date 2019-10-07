@@ -1,8 +1,8 @@
-#include "RootConsole.hpp"
+#include "RootConsole.h"
 
-#include "Console.hpp"
-#include "ConsoleCell.hpp"
-#include "TileRenderer.hpp"
+#include "Console.h"
+#include "ConsoleCell.h"
+#include "TileRenderer.h"
 
 namespace TTK
 {
