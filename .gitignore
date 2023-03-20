@@ -1,3 +1,8 @@
+*.swp
 .build/
 bin/
-*.swp
+
+Makefile
+CMake*
+cmake*
+!CMakeList.txt
