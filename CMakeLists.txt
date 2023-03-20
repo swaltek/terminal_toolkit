@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(console_toolkit)
 
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
@@ -10,7 +13,6 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(main_test
 	lib/Console.cpp
-	lib/RootConsole.cpp
 	lib/TileRenderer.cpp
 	lib/Window.cpp
 	test/main.cpp)
