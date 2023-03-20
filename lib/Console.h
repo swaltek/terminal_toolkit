@@ -21,6 +21,7 @@ namespace TTK
 		unsigned cell_count() const { return width_ * height_; }
 		unsigned width() const { return width_; }
 		unsigned height() const { return height_; }
+		ConsoleCell* cells() const { return cells_; }
 	private:
 		unsigned width_, height_;
 	protected:
