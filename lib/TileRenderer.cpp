@@ -1,4 +1,5 @@
 #include "TileRenderer.h"
+#include "Console.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>
@@ -79,6 +80,19 @@ namespace TTK
     if( err ) { printf("error setting color mod!"); }
     SDL_RenderCopy( renderer_, texture_, &tile, &rect);
     if( err ) { printf("error render copy"); }
+  }
+
+  void TileRenderer::render_console(Console* console)
+  {
+    auto cells = console->cells();
+    for(unsigned i{ 0 }; i < console->cell_count(); ++i)
+    {
+      int cell_x = (i % console->width()) * tile_width();
+      int cell_y = (i / console->width()) * tile_height();
+      SDL_Rect rect = 
+        { cell_x, cell_y, tile_width(), tile_height() };
+      render( rect, cells[i] );
+    }
   }
   
   void TileRenderer::free()

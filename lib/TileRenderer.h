@@ -2,6 +2,7 @@
 #define _H_TTK_TILE_RENDERER
 #include <SDL2/SDL.h>
 
+#include "Console.h"
 #include "ConsoleCell.h"
 #include <memory>
 
@@ -19,6 +20,7 @@ namespace TTK
 			void free();
 	
 			SDL_Rect get_tile(const char) const;
+			void render_console(Console* console);
 			void render(const SDL_Rect&,const ConsoleCell&);
 	
 			int tile_width() const { return tile_width_; }

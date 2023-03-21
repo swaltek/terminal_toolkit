@@ -27,11 +27,12 @@ namespace TTK
         TileRenderer* t_renderer = new TileRenderer( renderer_ );
         good_ = t_renderer->load_from_bmp(tileset_path);
         tile_renderer_ = t_renderer;
+        int c_width = width_ / tile_renderer_->tile_width();
+        int c_height = height_ / tile_renderer_ ->tile_height();
+        console = new Console(c_width, c_height);
   
-        console = new Console(10, 10);
-  
-        if( !good_ ) printf("Failed to create root console!\n");
       }
+      else printf("Failed to create root console!\n");
     }
   }
   
@@ -79,28 +80,16 @@ namespace TTK
 
   void Window::render()
   {
-		//int err = SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xff );
+    //int err = SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xff );
   //  if( err ) printf("Error setting renderer drawcolor!");
-		int err = SDL_RenderClear( renderer_ );
+    int err = SDL_RenderClear( renderer_ );
     if( err ) printf("Error clearing renderer!");
 
-    render_console();
+    tile_renderer_->render_console(console);
 
-		SDL_RenderPresent( renderer_ );
+    SDL_RenderPresent( renderer_ );
   }
 
-  void Window::render_console()
-  {
-    auto cells = console->cells();
-    for(unsigned i{ 0 }; i < console->cell_count(); ++i)
-    {
-      int cell_x = (i % console->width()) * tile_renderer_->tile_width();
-      int cell_y = (i / console->height()) * tile_renderer_->tile_height();
-      SDL_Rect rect = 
-        { cell_x, cell_y, tile_renderer_->tile_width(), tile_renderer_->tile_height() };
-      tile_renderer_->render( rect, cells[i] );
-    }
-  }
   
   bool init_sdl()
   {
