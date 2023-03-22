@@ -1,7 +1,9 @@
+#include "Window.h"
 #include "TileRenderer.h"
 #include "Console.h"
 
 #include <SDL2/SDL.h>
+#include <iostream>
 #include <cstdio>
 
 namespace TTK
@@ -19,8 +21,8 @@ namespace TTK
   {
     free(); //Get rid of any already existing texture
   
-    printf("Loading %s to TileRenderer\n", file_path);
-    SDL_Texture* new_texture_ { NULL }; //Final  texture
+    std::clog << "[Info] Loading " << file_path << " into TileRenderer\n";
+    SDL_Texture* new_texture { nullptr }; //Final  texture
     SDL_Surface* loaded_surface = SDL_LoadBMP( file_path );
   
     if(loaded_surface != nullptr )
@@ -29,14 +31,10 @@ namespace TTK
       unsigned first_pixel = static_cast<unsigned*>(loaded_surface->pixels)[0];
       if( SDL_SetColorKey( loaded_surface, SDL_TRUE, first_pixel ) != 0 )
       {
-        printf( "Error color keying! SDL Error %s\n", SDL_GetError() );
+        sdlerr(__FILE__, __LINE__);
       }
   
-      new_texture_ = SDL_CreateTextureFromSurface( renderer_, loaded_surface );
-      if( new_texture_ == nullptr )
-      {
-        printf( "Unable to create texture from %s! SDL Error: %s\n", file_path, SDL_GetError() );
-      }
+      new_texture = SDL_CreateTextureFromSurface( renderer_, loaded_surface );
   
       width_ = loaded_surface->w;
       height_ = loaded_surface->h;
@@ -53,8 +51,8 @@ namespace TTK
     
   
     //return success
-    texture_ = new_texture_ ;
-    printf("Load %s!\n", texture_ != nullptr ? "successful" : "failed" );
+    texture_ = new_texture;
+    printf("[info] Loading texture was %s!\n", texture_ != nullptr ? "successful" : "failed" );
     return texture_ != nullptr;
   }
   
@@ -70,25 +68,25 @@ namespace TTK
     int err{0};
     //Draw background first
     err = SDL_SetRenderDrawColor(renderer_, cell.back_r, cell.back_g, cell.back_b, 0xff);
-    if( err ) { printf("Error setting renderer draw color"); }
+    if( err ) { printf("Error setting renderer draw color\n"); }
     err = SDL_RenderFillRect(renderer_, &rect);
-    if( err ) { printf("Error filling rectangle"); }
+    if( err ) { printf("Error filling rectangle\n"); }
   
     //Draw foreground
     SDL_Rect tile = get_tile(cell.c);
-    err = SDL_SetTextureColorMod(texture_, cell.r, cell.g, cell.b);
-    if( err ) { printf("error setting color mod!"); }
-    SDL_RenderCopy( renderer_, texture_, &tile, &rect);
-    if( err ) { printf("error render copy"); }
+    if(SDL_SetTextureColorMod(texture_, cell.r, cell.g, cell.b) != 0)
+      sdlerr(__FILE__, __LINE__);
+    if(SDL_RenderCopy( renderer_, texture_, &tile, &rect) != 0)
+      sdlerr(__FILE__,__LINE__);
   }
 
-  void TileRenderer::render_console(Console* console)
+  void TileRenderer::render_console(const Console& console)
   {
-    auto cells = console->cells();
-    for(unsigned i{ 0 }; i < console->cell_count(); ++i)
+    auto cells = console.cells();
+    for(unsigned i{ 0 }; i < console.cell_count(); ++i)
     {
-      int cell_x = (i % console->width()) * tile_width();
-      int cell_y = (i / console->width()) * tile_height();
+      int cell_x = (i % console.width()) * tile_width();
+      int cell_y = (i / console.width()) * tile_height();
       SDL_Rect rect = 
         { cell_x, cell_y, tile_width(), tile_height() };
       render( rect, cells[i] );

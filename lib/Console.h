@@ -2,6 +2,7 @@
 #define _H_TTK_CONSOLE
 #include "ConsoleCell.h"
 #include <string>
+#include <stdexcept>
 
 namespace TTK
 {
@@ -9,7 +10,8 @@ namespace TTK
 	{
 	public:
 		Console(unsigned, unsigned);
-		virtual ~Console();
+		//Console() = default;
+		~Console();
 	
 		void clear();
 		void set_char(unsigned, unsigned, char);
@@ -24,6 +26,8 @@ namespace TTK
 		ConsoleCell* cells() const { return cells_; }
 	private:
 		unsigned width_, height_;
+
+		inline std::size_t index(int x, int y) { return (y * width_) + x; }
 	protected:
 		ConsoleCell* cells_;
 	};

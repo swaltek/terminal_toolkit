@@ -13,21 +13,23 @@ std::vector<std::vector<bool>> map;
 typedef std::mt19937 Rng;
 Rng rng;
 
-void map_to_screen(Console* console)
+void map_to_console(Console& console)
 {
-  int y = 0;
-  for(auto it = map.begin(); it != map.end(); it++, y++){
-    int x = 0;
-    for(auto it_row = it->begin(); it_row != it->end(); it_row++, x++){
-      std::string val = (*it_row) ? "." : "#";
-      console->set_char(x, y, val[0]);
-      console->set_color(x, y, 0xff, 0x00, 0xff);
-      console->set_back_color(x, y, 0xff, 0xff, 0xff);
+  int y{0};
+  for(auto row : map){
+    int x{0};
+    for(auto cell : row){
+      std::string val = (cell) ? "." : "#";
+      console.set_char(x, y, val[0]);
+      console.set_color(x, y, 0xff, 0x00, 0xff);
+      console.set_back_color(x, y, 0xff, 0xff, 0xff);
+      x++;
     }
+    y++;
   }
 }
 
-void init_game( int width, int height)
+void init_game( size_t width, size_t height)
 {
   uint32_t seed_val = 234;
   rng.seed(seed_val);
@@ -77,7 +79,7 @@ int main()
     return -1;
   }
 
-  init_game(window.console->width(), window.console->height());
+  init_game(window.console.width(), window.console.height());
 
 
   //timestep
@@ -107,17 +109,16 @@ int main()
       */
     }
 
-    //test code
-    map_to_screen(window.console);
+    map_to_console(window.console);
 
     //fps counter
     std::string fps_string = std::to_string(fps);
     fps_string = fps_string.substr(0, fps_string.find('.') + 2);
-    window.console->print(0, 0, fps_string);
+    window.console.print(0, 0, fps_string);
 
     //render console
     window.render();
-    window.console->clear();
+    window.console.clear();
 
     //UPDATE TIMESTEP AND FPS
     end_counter = SDL_GetPerformanceCounter();
@@ -139,9 +140,9 @@ int main()
       }
       //adding time delayed to elapsed time of frame for fps calculation
       elapsed_ms += floor(ms_left) + delayed_ms;
-      /*floor(ms_left) is time delayed using SDL_Delay
-      this has a chance to be inaccurate if SDL_Delay 
-      delays more then floor(ms_left) due to OS sceduling*/
+      // floor(ms_left) is time delayed using SDL_Delay
+      // this has a chance to be inaccurate if SDL_Delay 
+      // delays more then floor(ms_left) due to OS sceduling
     }
     //dividing by 1000.0f to convert to seconds
     fps = 1.0f / (elapsed_ms / 1000.0f);
