@@ -2,8 +2,9 @@
 Emulate an ASCII terminal using SDL2
 
 ## How to build
-Use cmake!
+Update submodules then use cmake!
 ```
+git submodule update --init
 cmake .
 cmake --build .
 ```

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(ttk)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
@@ -19,6 +20,7 @@ add_executable(main
 target_link_libraries(main ${SDL2_LIBRARIES})
 
 set(EnTT_DIR libs/entt)
-find_package(EnTT REQUIRED)
+target_include_directories(main PRIVATE ${EnTT_DIR}/src)
 
-target_link_libraries(main EnTT::EnTT)
+#find_package(EnTT REQUIRED)
+#target_link_libraries(main EnTT::EnTT)

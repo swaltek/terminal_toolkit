@@ -1,5 +1,6 @@
 #include "display/Window.h"
 #include <SDL2/SDL.h>
+#include <entt/entt.hpp>
 
 #include <random>
 #include <sstream>
