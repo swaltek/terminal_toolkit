@@ -17,3 +17,8 @@ add_executable(main
 	src/display/Window.cpp
 	src/main.cpp)
 target_link_libraries(main ${SDL2_LIBRARIES})
+
+set(EnTT_DIR libs/entt)
+find_package(EnTT REQUIRED)
+
+target_link_libraries(main EnTT::EnTT)

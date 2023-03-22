@@ -72,6 +72,38 @@ void init_game( size_t width, size_t height)
     }
 }
 
+float frame_cap{ 60 };
+float ms_per_frame{ 1000.0f / frame_cap };
+float fps{ 0 };
+
+void delay_step(uint64_t start_counter, uint64_t end_counter)
+{
+    //mulitplying by 1000.0f to convert to ms
+    float elapsed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
+    if( elapsed_ms < ms_per_frame )
+    {
+      float ms_left = ms_per_frame - elapsed_ms;
+      SDL_Delay( floor(ms_left) );
+
+      //loop for the amount of time that could not be delayed with SDL_Delay
+      float missed_ms = ms_left - floor(ms_left);
+      start_counter = SDL_GetPerformanceCounter();
+      float delayed_ms { 0 };
+      while(delayed_ms < missed_ms)
+      {
+        end_counter = SDL_GetPerformanceCounter();
+        delayed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
+      }
+      //adding time delayed to elapsed time of frame for fps calculation
+      elapsed_ms += floor(ms_left) + delayed_ms;
+      // floor(ms_left) is time delayed using SDL_Delay
+      // this has a chance to be inaccurate if SDL_Delay 
+      // delays more then floor(ms_left) due to OS sceduling
+    }
+    //dividing by 1000.0f to convert to seconds
+    fps = 1.0f / (elapsed_ms / 1000.0f);
+}
+
 int main()
 {
   Window window(1280, 720, "art/curses_640x300.bmp");
@@ -81,11 +113,6 @@ int main()
 
   init_game(window.console.width(), window.console.height());
 
-
-  //timestep
-  float frame_cap{ 60 };
-  float ms_per_frame{ 1000.0f / frame_cap };
-  float fps{ 0 };
   uint64_t start_counter;
   uint64_t end_counter;
 
@@ -122,30 +149,7 @@ int main()
 
     //UPDATE TIMESTEP AND FPS
     end_counter = SDL_GetPerformanceCounter();
-    //mulitplying by 1000.0f to convert to ms
-    float elapsed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
-    if( elapsed_ms < ms_per_frame )
-    {
-      float ms_left = ms_per_frame - elapsed_ms;
-      SDL_Delay( floor(ms_left) );
-
-      //loop for the amount of time that could not be delayed with SDL_Delay
-      float missed_ms = ms_left - floor(ms_left);
-      start_counter = SDL_GetPerformanceCounter();
-      float delayed_ms { 0 };
-      while(delayed_ms < missed_ms)
-      {
-        end_counter = SDL_GetPerformanceCounter();
-        delayed_ms = ((end_counter - start_counter) / (float)SDL_GetPerformanceFrequency()) * 1000.0f;
-      }
-      //adding time delayed to elapsed time of frame for fps calculation
-      elapsed_ms += floor(ms_left) + delayed_ms;
-      // floor(ms_left) is time delayed using SDL_Delay
-      // this has a chance to be inaccurate if SDL_Delay 
-      // delays more then floor(ms_left) due to OS sceduling
-    }
-    //dividing by 1000.0f to convert to seconds
-    fps = 1.0f / (elapsed_ms / 1000.0f);
+    delay_step(start_counter, end_counter);
   }
   return 0;
 }
