@@ -1,4 +1,4 @@
-#include "../lib/Window.h"
+#include "display/Window.h"
 #include <SDL2/SDL.h>
 
 #include <random>
@@ -40,7 +40,7 @@ void init_game( size_t width, size_t height)
   std::uniform_int_distribution<int> dir_dist(0, 3);
     
     int x_pos = width / 2, y_pos = height / 2;
-    const int k_step_count = 250;
+    const int k_step_count = 2500;
     for(int i = 0; i < k_step_count; i++)
     {
       int direction = dir_dist(rng);
@@ -74,7 +74,7 @@ void init_game( size_t width, size_t height)
 
 int main()
 {
-  Window window(640, 300, "data/art/curses_640x300.bmp");
+  Window window(1280, 720, "art/curses_640x300.bmp");
   if(!window.good()){
     return -1;
   }
