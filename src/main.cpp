@@ -1,5 +1,6 @@
 #include "display/Window.h"
 #include <SDL2/SDL.h>
+#include <entt/entt.hpp>
 
 #include <random>
 #include <sstream>
@@ -104,6 +105,23 @@ void delay_step(uint64_t start_counter, uint64_t end_counter)
     fps = 1.0f / (elapsed_ms / 1000.0f);
 }
 
+struct position{
+  int x;
+  int y;
+};
+
+enum action_t{
+  no_action,
+  move_action,
+};
+
+struct actionable{
+  action_t t;
+  float progress;
+  float goal;
+};
+position player_pos_change{0, 0}; //held in actionable somehow TODO
+
 int main()
 {
   Window window(1280, 720, "art/curses_640x300.bmp");
@@ -112,6 +130,11 @@ int main()
   }
 
   init_game(window.console.width(), window.console.height());
+
+  entt::registry registry{};
+  const auto entity = registry.create();
+  registry.emplace<position>(entity,window.console.width() / 2 , window.console.height() / 2);
+  registry.emplace<actionable>(entity, no_action,0, 0);
 
   uint64_t start_counter;
   uint64_t end_counter;
@@ -126,17 +149,59 @@ int main()
     while( SDL_PollEvent( &e ) != 0 )
     {
       if( e.type == SDL_QUIT) quit = true;
-      /*
-      else if( e.type == SDL_KEYDOWN )
+
+      if( e.type == SDL_KEYDOWN )
       {
         switch( e.key.keysym.sym )
         {
+          case SDLK_a:
+            player_pos_change.x -= 1;
+          break;
+          case SDLK_d:
+            player_pos_change.x += 1;
+          break;
+          case SDLK_w:
+            player_pos_change.y -= 1;
+          break;
+          case SDLK_s:
+            player_pos_change.y += 1;
+          break;
         }
       }
-      */
     }
 
     map_to_console(window.console);
+
+    auto pos_view = registry.view<position, actionable>();
+    pos_view.each([&window, &player_pos_change](auto &pos, auto& actionable) {
+      if(actionable.t == move_action){
+        actionable.progress += 0.1; //TODO base on time step
+        //TODO move draw code elsewhere aswell
+        std::stringstream ss;
+        ss << std::string((int)actionable.progress, '*');
+        ss << std::string((int) actionable.goal - (int) actionable.progress, '-');
+        window.console.print(pos.x - ((int)actionable.goal/2), pos.y + 2,ss.str());
+
+        if (actionable.progress > actionable.goal ){
+          actionable.t = no_action;
+          if( player_pos_change.x ){
+            pos.x += player_pos_change.x > 0 ? 1 : -1;
+          }
+          if( player_pos_change.y ){
+            pos.y += player_pos_change.y > 0 ? 1 : -1;
+          }
+          player_pos_change = {0, 0};
+        }
+      }else if(actionable.t == no_action){
+        if( player_pos_change.x || player_pos_change.y ){
+          actionable.t = move_action;
+          actionable.progress = 0;
+          actionable.goal = 4;
+        }
+      }
+      //TODO handle move elsewhere
+      window.console.set_char(pos.x, pos.y, '@');
+    });
 
     //fps counter
     std::string fps_string = std::to_string(fps);
