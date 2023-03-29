@@ -6,3 +6,6 @@ Makefile
 CMake*
 cmake*
 !CMakeList.txt
+compile_commands.json
+
+*.out
